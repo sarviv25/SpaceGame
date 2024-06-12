@@ -1,4 +1,4 @@
-/** 
+/**
  * Lab Goal: This lab was designed to teach you
  * how to find collisions with many objects
  * 
@@ -6,139 +6,151 @@
  */
 
 // Initialize variables
+var bg1 ={x:0, y: 0, w:323, h:450, s:2, img:"bg1"};
+var bg2 ={x:320, y: 0, w:323, h:450, s:2, img:"bg2"};
+var asteroid1 ={x:100, y:-20, w:50, h:50, s:2, img:"asteroid1"};
+var asteroid2 ={x:200, y:-20, w:50, h:50, s:2, img:"asteroid2"};
+var asteroid3 ={x:300, y:-10, w:50, h:50, s:2, img:"asteroid3"};
+var asteroids = [asteroid1, asteroid2];
+var enemies = [asteroid3];
+var rocket ={x:150, y:230, w:50, h:100,s:7, img:"rocket"};
 var score = 0;
-var ay = 40, ay2=40, ay3=40;   // Initial asteroid Y position
-var ax = 0, ax2=100, ax3=200;    // Initial asteroid X position
-var ry = 350;  // Initial rocket Y position
-var rx = 80;   // Initial rocket X position
-var time = 0;  // Time variable
-var sec = 0;   // Seconds
-var min = 0;   // Minutes
-var speed = 5; // Rocket's speed
-var speeda = 8; // Asteroid's speed
+// Functions to set up game
+function scrollBg(){
+  bg1.x+=bg1.s;
+  bg2.x+=bg2.s;
+  setPosition(bg1.img, bg1.x, bg1.y, bg1.w, bg1.h);
+  setPosition(bg2.img, bg2.x, bg2.y, bg2.w, bg2.h);
+  // find the wrap around the screen
+   if (bg1.x>320){
+    bg1.x=-319;
+  }
+  if (bg2.x>320){
+  bg2.x=-319;
+  }
+}
+
+function setPosition(el, x, y, w, h){
+	var element= document.getElementById(el);
+         element.style.position = 'absolute';
+					element.style.left = x + 'px';
+					element.style.top = y + 'px';
+					element.style.width = w + 'px';
+					element.style.height =h + 'px';
+
+}
+setInterval(function() {
+scrollBg();
+}, 100);
+
+//makeAsteroid();
+//makeRocket();
+//drawScore();
 
 
+// onEvent("screen1", "keydown", function (event) {
+//   if (event.key=="Left"){
+//     rocket.x -= rocket.s; // Move the rocket left
+//   }
+//   if (event.key=="Right"){
+//     rocket.x +=rocket.s; // Move the rocket right
+//   }
+//   if (event.key=="Up"){
+//     rocket.y -= rocket.s; // Move the rocket up
+//   }
+//   if (event.key==="Down"){
+//     rocket.y += rocket.s; // Move the rocket down
+//   }
 
-// Task 1: Implement collision detection between rocket and asteroids (Requirements)
-// When the rocket and an asteroid overlap, increase the score by 10 and move the asteroid to a random location
-
-// Task 2: Create a game over condition (Requirements)
-// When the score reaches a certain threshold or when the rocket is hit multiple times, display a game over message and stop the game
+// setPosition(rocket.img,rocket.x,rocket.y,rocket.w,rocket.h);
+// });
 
 
-// Task 3: Add two more meteors to the scene (HW)
-// Initial Y position for asteroid 2
-// Initial X position for asteroid 2
-// Initial Y position for asteroid 3
-// Initial X position for asteroid 3
-
-// Event handler for the "playButton" click
-onEvent("playButton", "click", function() {
-    hideElement("playButton");
-
-    // Create two images: asteroid and rocket
-    image("asteroid", "assets/meteor2.png");
-    image("asteroid2", "assets/meteor.png");
-    image("asteroid3", "assets/rock.png");
+// timedLoop(50, function (){
+//   scrollBg();
+//   moveAsteroid(asteroid1);
+//   moveAsteroid(asteroid2);
+//   moveAsteroid(asteroid3);
+//   handleCollision(rocket, asteroids, false);
+//     handleCollision(rocket, enemies, true);
+//   checkOverlap(asteroid1);
+//   checkOverlap(asteroid2);
+//   checkOverlap(asteroid3);
+// });
+// function handleCollision(item, objects, attack){
+//   var points=2
+//   if(attack==true ){
+//     points=-3;
     
-    image("rocket", "assets/rocket.gif");
-    setProperty("rocket", "border-width", 1);
-    setPosition("asteroid", ax, ay, 50, 50);
-    setPosition("asteroid2", ax2, ay2, 50, 50);
-    setPosition("asteroid3", ax3, ay3, 50, 50);
-    
-    
-    setPosition("rocket", rx, ry, 50, 100);
-    //Task 3
-
-    // Set up a timed loop
-    timedLoop(100, function() {
-        ay = ay + speeda;
-        ay2 = ay2 + speeda;
-        ay3 = ay3 + speeda;
-        setPosition("asteroid", ax, ay, 50, 50);
-        setPosition("asteroid2", ax2, ay2, 50, 50);
-         setPosition("asteroid3", ax3, ay3, 50, 50);
-        // Task 3: Move the additional meteors
-       
-
-        setText("score", "SCORE: " + score);
-
-        // Wrap around the asteroid from the bottom to the top
-        if (ay >= 450) {
-            ay = 40;
-            ax = randomNumber(0, 320);
-            score = score - 2;
-            speeda++;
-        }
-
-        // Task 1 (Requirements): Implement collision detection here
-
-        // Update time and display it
-        time = time + 1;
-        sec = Math.floor(time / 10) % 60;
-        min = Math.floor(time / 600) % 60;
-        setText("time", "TIME: " + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec);
-
-        // Display the score
-        setText("score", "SCORE: " + score);
-
-        // Task 2 (Requirements): Check for the game over condition and handle it
-    });
-});
-
-// Event handler for arrow key presses to move the rocket
-onEvent("screen1", "keydown", function(event) {
-    if (event.key === "=") {
-        speed = speed + 5; // Increase rocket speed
-    }
-    if (event.key === "-") {
-        speed = speed - 5; // Decrease rocket speed
-    }
-    if (event.key === "Left") {
-        rx = rx - speed; // Move the rocket left
-    }
-    if (event.key === "Right") {
-        rx = rx + speed; // Move the rocket right
-    }
-    if (event.key === "Down") {
-        ry = ry + speed; // Move the rocket down
-    }
-    if (event.key === "Up") {
-        ry = ry - speed; // Move the rocket up
-    }
-    setPosition("rocket", rx, ry, 50, 100);
-
-    // Task 1 (Requirements): Check for collisions between the rocket and asteroid1
-    //if there is overlap the value will be more than 0 if not value will be negative.
-    
-    var xOverlap=Math.max(0, Math.min(rx+50, ax+50)-Math.max(rx,ax)+1)>0 ;
-    var yOverlap= Math.max(0, Math.min(ry+100, ay+50)-Math.max(ry,ay)+1)>0;
-    
-    var xOverlap2=Math.max(0, Math.min(rx+50, ax2+50)-Math.max(rx,ax2)+1)>0 ;
-    var yOverlap2= Math.max(0, Math.min(ry+100, ay2+50)-Math.max(ry,ay2)+1)>0;
-    
-    var xOverlap3=Math.max(0, Math.min(rx+50, ax3+50)-Math.max(rx,ax3)+1)>0 ;
-    var yOverlap3= Math.max(0, Math.min(ry+100, ay3+50)-Math.max(ry,ay3)+1)>0;
-    
-    if (xOverlap && yOverlap){
-      score=score+5;
-      ay = 40;
-      ax = randomNumber(0, 320);
-    }
-    
-    if (xOverlap2 && yOverlap2){
-      score=score+5;
-      ay2 = 40;
-      ax2 = randomNumber(0, 320);
-    }
-    
-    if (xOverlap3 && yOverlap3){
-      score=score+5;
-      ay3 = 40;
-      ax3 = randomNumber(0, 320);
-    }
+//   }
+//   for (var i = 0; i<objects.length; i++){
+//     if (checkCollision(item,objects[i])){
+//        objects[i].y = -90;
+//   objects[i].x = randomNumber(15,290);
+//   objects[i].s = randomNumber(3,6);
+//   setPosition(objects[i].img, objects[i].x, objects[i].y);
+//   score=score+=points;
+//   setText("score", "Score: "+score);
+//   if (score>= 20){
+//     stopTimedLoop();
+//   }
     
     
+//   }
+//   }
+  
+// }
+
+// function drawScore (){
+//   textLabel ("score", "Score: ");
+//   setPosition ("score", 190, 25, 105, 25);
+//   setProperty("score", "text-color", "blue");
+//   setProperty("score", "border-color","blue");
+//   setProperty("score", "border-width", 3);
+//   setProperty("score", "border-radius", 3);
+// }
+
+
+// function makeAsteroid(){
+//     image(asteroid1.img, "meteor.png");
+//     setProperty(asteroid1.img, "fit", "fill");
+//     setPosition(asteroid1.img, asteroid1.x, asteroid1.y, asteroid1.w, asteroid1.h);
+//     // draw asteroid2
+//     image(asteroid2.img, "meteor2.png");
+//     setProperty(asteroid2.img, "fit", "fill");
+//     setPosition(asteroid2.img, asteroid2.x, asteroid2.y, asteroid2.w, asteroid2.h);
+//     //draw asteroid3
+//     image(asteroid3.img, "rock.png");
+//     setProperty(asteroid1.img, "fit", "fill");
+//     setPosition(asteroid3.img, asteroid3.x, asteroid3.y, asteroid3.w, asteroid3.h);
     
-});
+// }
+// function moveAsteroid (asteroid){
+//   asteroid.y += asteroid.s;
+//   setPosition(asteroid.img,asteroid.x,asteroid.y);
+// }
+
+// function makeRocket (){
+//     image(rocket.img, "rocket.gif");
+//     setPosition(rocket.img, rocket.x, rocket.y, rocket.w, rocket.h);
+// }
+
+// function checkCollision (obj1, obj2){
+// // console.log (typeof(obj1)!=typeof(obj2));
+// var xOv= Math.max(0,Math.min(obj1.x+obj1.w, obj2.x+obj2.w)-Math.max(obj1.x,obj2.x)+1);
+// var yOv= Math.max(0,Math.min(obj1.y+obj1.h, obj2.y+obj2.h)-Math.max(obj1.y,obj1.y)+1);
+// return xOv>0 && yOv>0 ;
+ 
+
+// }
+// function checkOverlap (asteroid) {
+//   if (asteroid.y >= 450) {
+//     asteroid.y = -100;
+//     asteroid.x = randomNumber(20,300);
+//     asteroid.s = randomNumber(4,6);
+//     setPosition(asteroid.img, asteroid.x, asteroid.y);
+//     score=score-=1;
+//    setText("score", "Score: "+score)
+    
+//   }
+// }
